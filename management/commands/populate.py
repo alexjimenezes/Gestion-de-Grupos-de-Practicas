@@ -79,7 +79,8 @@ class Command(BaseCommand):
         # delete all models stored (clean table)
         # in database
         # remove pass and ADD CODE HERE
-        pass
+        Tag.objects.all().delete()
+        Post.objects.all().delete()
 
     def teacher(self):
         "create teachers here"
