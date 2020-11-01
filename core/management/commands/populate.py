@@ -13,7 +13,8 @@ from core.models import (OtherConstraints, Pair, Student,
                          GroupConstraints, TheoryGroup,
                          LabGroup, Teacher)
 
-import cvs
+import csv
+import os
 
 
 # The name of this class is not optional must be Command
@@ -49,21 +50,35 @@ class Command(BaseCommand):
         parser.add_argument('studentinfolastyear', type=str, help="""CSV file with student information
         header= NIE,DNI,Apellidos,Nombre,Teoría, grade lab, grade the
         if NIE or DNI == 0 skip this entry and print a warning""")
+        parser.add_argument('auxiliary_info', type=str, help="""txt file with auxiliary information""")
 
     # handle is another compulsory name, do not change it"
     def handle(self, *args, **kwargs):
+        path = os.getcwd()
+
+        print(path)
         model = kwargs['model']
         cvsStudentFile = kwargs['studentinfo']
         cvsStudentFileGrades = kwargs['studentinfolastyear']
+        txtAux = kwargs['auxiliary_info']
+
+        # with open('/tmp/dict.txt', 'r') as dict_file:
+        #    dict_text = dict_file.read()
+        #   dict_from_file = eval(dict_text)
+        f_aux = open("./core/management/commands/" + txtAux, "r")
+        txt_f_aux = f_aux.read()
+        teacher_data, labgroup_data, theorygroup_data, x, y = txt_f_aux.split("====")
+
+
         # clean database
         if model == 'all':
             self.cleanDataBase()
         if model == 'teacher' or model == 'all':
-            self.teacher()
+            self.teacher(teacher_data)
         if model == 'labgroup' or model == 'all':
-            self.labgroup()
+            self.labgroup(labgroup_data)
         if model == 'theorygroup' or model == 'all':
-            self.theorygroup()
+            self.theorygroup(theorygroup_data)
         if model == 'groupconstraints' or model == 'all':
             self.groupconstraints()
         if model == 'otherconstrains' or model == 'all':
@@ -79,23 +94,31 @@ class Command(BaseCommand):
         # delete all models stored (clean table)
         # in database
         # remove pass and ADD CODE HERE
-        Tag.objects.all().delete()
-        Post.objects.all().delete()
+        """ Tag.objects.all().delete()
+        Post.objects.all().delete() """
+        pass
 
-    def teacher(self):
+    def teacher(self, data):
         "create teachers here"
         # remove pass and ADD CODE HERE
-        pass
+        teacherD = {}
+        exec(data.replace(" ", ""))
 
-    def labgroup(self):
+        for t_id, t_data in teacherD.items():
+            t = Teacher.objects.get_or_create(first_name=t_data['first_name'], family_name=t_data['last_name'])[0]
+            t.save()
+
+    def labgroup(self, data):
         "add labgroups"
         # remove pass and ADD CODE HERE
-        pass
+        labgroupD = {}
+        exec(data.replace(" ", ""))
 
-    def theorygroup(self):
+    def theorygroup(self, data):
         "add theorygroups"
         # remove pass and ADD CODE HERE
-        pass
+        theorygroupD = {}
+        exec(data.replace(" ", ""))
 
     def groupconstraints(self):
         "add group constrints"

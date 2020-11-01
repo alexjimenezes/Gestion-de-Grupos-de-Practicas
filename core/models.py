@@ -18,7 +18,7 @@ class Student(AbstractUser):
 
     # REQUIRED_FIELDS = ['username', 'password', 'first_name', 'last_name']
     USERNAME_FIELD = 'username'
-    EMAIL_FIELD = 'username'
+    # EMAIL_FIELD = 'username'
 
 
 class LabGroup(models.Model):
@@ -45,7 +45,7 @@ class Pair(models.Model):
     studentBreakRequest = models.ForeignKey('Student', related_name='breakPair', on_delete=models.CASCADE)
 
 
-class GroupConstraint(models.Model):
+class GroupConstraints(models.Model):
     #identifier = models.IntegerField(primary_key=True)
     labGroup = models.ForeignKey('LabGroup', on_delete=models.CASCADE)
     theoryGroup = models.ForeignKey('TheoryGroup', on_delete=models.CASCADE)
@@ -57,7 +57,7 @@ class TheoryGroup(models.Model):
     language = models.CharField(blank=False, max_length=128)
 
 
-class OtherConstraint(models.Model):
+class OtherConstraints(models.Model):
     #identifier = models.IntegerField(primary_key=True)
     selectGroupStartDate = models.DateTimeField()
     minGradeTheoryConv = models.FloatField(default=0)

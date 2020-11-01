@@ -1,5 +1,5 @@
 from django.contrib import admin
-from core.models import Student, LabGroup, Teacher, Pair, GroupConstraint, TheoryGroup, OtherConstraint
+from core.models import Student, LabGroup, Teacher, Pair, GroupConstraints, TheoryGroup, OtherConstraints
 
 
 class StudentAdmin(admin.ModelAdmin):
@@ -35,6 +35,6 @@ admin.site.register(Student, StudentAdmin)
 admin.site.register(LabGroup, LabGroupAdmin)
 admin.site.register(Teacher, TeacherAdmin)
 admin.site.register(Pair, PairAdmin)
-admin.site.register(GroupConstraint, GroupConstaintAdmin)
+admin.site.register(GroupConstraints, GroupConstaintAdmin)
 admin.site.register(TheoryGroup, TheoryGroupAdmin)
-admin.site.register(OtherConstraint, OtherConstraintAdmin)
+admin.site.register(OtherConstraints, OtherConstraintAdmin)
