@@ -42,7 +42,7 @@ class Pair(models.Model):
     student1_id = models.ForeignKey('Student', related_name='par1', on_delete=models.CASCADE)
     student2_id = models.ForeignKey('Student', related_name='par2',on_delete=models.CASCADE)
     validated = models.BooleanField(default=False)
-    studentBreakRequest = models.ForeignKey('Student', related_name='breakPair', on_delete=models.CASCADE)
+    studentBreakRequest = models.ForeignKey('Student', related_name='breakPair', on_delete=models.CASCADE, null=True)
 
 
 class GroupConstraints(models.Model):

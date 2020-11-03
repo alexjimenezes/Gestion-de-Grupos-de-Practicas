@@ -12,8 +12,8 @@ from django.core.management.base import BaseCommand
 from core.models import (OtherConstraints, Pair, Student,
                          GroupConstraints, TheoryGroup,
                          LabGroup, Teacher)
-
-import csv
+from collections import OrderedDict
+import pandas as pd
 import os
 
 
@@ -62,12 +62,13 @@ class Command(BaseCommand):
         cvsStudentFileGrades = kwargs['studentinfolastyear']
         txtAux = kwargs['auxiliary_info']
 
+
         # with open('/tmp/dict.txt', 'r') as dict_file:
         #    dict_text = dict_file.read()
         #   dict_from_file = eval(dict_text)
         f_aux = open("./core/management/commands/" + txtAux, "r")
         txt_f_aux = f_aux.read()
-        teacher_data, labgroup_data, theorygroup_data, x, y = txt_f_aux.split("====")
+        teacher_data, labgroup_data, theorygroup_data, groupconstraints_data, pairs_data = txt_f_aux.split("====")
 
 
         # clean database
@@ -80,7 +81,7 @@ class Command(BaseCommand):
         if model == 'theorygroup' or model == 'all':
             self.theorygroup(theorygroup_data)
         if model == 'groupconstraints' or model == 'all':
-            self.groupconstraints()
+            self.groupconstraints(groupconstraints_data)
         if model == 'otherconstrains' or model == 'all':
             self.otherconstrains()
         if model == 'student' or model == 'all':
@@ -88,15 +89,19 @@ class Command(BaseCommand):
         if model == 'studentgrade' or model == 'all':
             self.studentgrade(cvsStudentFileGrades)
         if model == 'pair' or model == 'all':
-            self.pair()
+            self.pair(pairs_data)
 
     def cleanDataBase(self):
         # delete all models stored (clean table)
         # in database
         # remove pass and ADD CODE HERE
-        """ Tag.objects.all().delete()
-        Post.objects.all().delete() """
-        pass
+        Teacher.objects.all().delete()
+        LabGroup.objects.all().delete()
+        TheoryGroup.objects.all().delete()
+        OtherConstraints.objects.all().delete()
+        Student.objects.all().delete()
+        Pair.objects.all().delete()
+        GroupConstraints.objects.all().delete()
 
     def teacher(self, data):
         "create teachers here"
@@ -105,7 +110,7 @@ class Command(BaseCommand):
         exec(data.replace(" ", ""))
 
         for t_id, t_data in teacherD.items():
-            t = Teacher.objects.get_or_create(first_name=t_data['first_name'], family_name=t_data['last_name'])[0]
+            t = Teacher.objects.get_or_create(id=t_id, first_name=t_data['first_name'], family_name=t_data['last_name'])[0]
             t.save()
 
     def labgroup(self, data):
@@ -113,32 +118,44 @@ class Command(BaseCommand):
         # remove pass and ADD CODE HERE
         labgroupD = {}
         exec(data.replace(" ", ""))
+        for l_id, l_data in labgroupD.items():
+            teacher = Teacher.objects.get(id=l_data['teacher'])
+            lg = LabGroup.objects.get_or_create(id=l_id, teacher=teacher, groupName=l_data['groupName'], language=l_data['language'], schedule=l_data['schedule'], maxNumberStudents=l_data['maxNumberStudents'])[0]
+            lg.save()
 
     def theorygroup(self, data):
         "add theorygroups"
         # remove pass and ADD CODE HERE
         theorygroupD = {}
         exec(data.replace(" ", ""))
+        for t_id, t_data in theorygroupD.items():
+            t = TheoryGroup.objects.get_or_create(id=t_id, groupName=t_data['groupName'], language=t_data['language'])[0]
+            t.save()
 
-    def groupconstraints(self):
+    def groupconstraints(self, data):
         "add group constrints"
         """ Follows which laboratory groups (4th column
             may be choosen by which theory groups (2nd column)
-theoryGroup: 126, labGroup: 1261
-theoryGroup: 126, labGroup: 1262
-theoryGroup: 126, labGroup: 1263
-theoryGroup: 127, labGroup: 1271
-theoryGroup: 127, labGroup: 1272
-theoryGroup: 120, labGroup: 1201
-theoryGroup: 129, labGroup: 1291
-theoryGroup: 125, labGroup: 1292"""
+        """
         # remove pass and ADD CODE HERE
-        pass
+        groupconstraintsD = {}
+        exec(data.replace(" ", ""))
+        for t_id, t_data in groupconstraintsD.items():
+            labGroup = LabGroup.objects.get(id=t_data['labGroup'])
+            theoryGroup = TheoryGroup.objects.get(id=t_data['theoryGroup'])
+            t = GroupConstraints.objects.get_or_create(id=t_id, labGroup=labGroup, theoryGroup=theoryGroup)[0]
+            t.save()
 
-    def pair(self):
+    def pair(self, data):
         "create a few valid pairs"
         # remove pass and ADD CODE HERE
-        pass
+        pairD = {}
+        exec(data.replace(" ", ""))
+        for t_id, t_data in pairD.items():
+            student1 = Student.objects.get(id=t_id)
+            student2 = Student.objects.get(id=t_data['student2'])
+            t = Pair.objects.get_or_create(id=t_id, student1_id=student1, student2_id=student2, validated=t_data['validated'])[0]
+            t.save()
 
     def otherconstrains(self):
         """create a single object here with staarting dates
@@ -155,10 +172,18 @@ theoryGroup: 125, labGroup: 1292"""
         # read csv file
         # structure NIE	DNI	Apellidos	Nombre	group-Teoría
         # remove pass and ADD CODE HERE
-        pass
+        stdReader = pd.read_csv("./core/management/commands/" + csvStudentFile)
+        counter = 1000
+        for index, row in stdReader.iterrows():
+            grupoToeria = TheoryGroup.objects.get(id=row['grupo-teoria'])
+            st = Student.objects.get_or_create(id=counter, first_name=row['Nombre'], last_name=row['Apellidos'], username=row['NIE'], password=row['DNI'], theoryGroup=grupoToeria)[0]
+            st.save
+            counter += 1
 
     def studentgrade(self, cvsStudentFileGrades):
         # read csv file
         # structure NIE	DNI	Apellidos	Nombre	group-Teoría	grade-practicas	gradeteoria
         # remove pass and ADD CODE HERE
-        pass
+        stdGradesReader = pd.read_csv("./core/management/commands/" + cvsStudentFileGrades)
+        for index, row in stdGradesReader.iterrows():
+            Student.objects.filter(username=row['NIE']).update(gradeLabLastYear=row['nota-practicas'], gradeTheoryLastYear=row['nota-teoria'])

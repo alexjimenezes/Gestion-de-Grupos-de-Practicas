@@ -102,9 +102,6 @@
 
 ====
 
-PAIRS
-NOTE: first student id is 1000, second 1001, etc
-students are order alphabeticcally (last_name, first_name)
         """ create two requests
             1000 -> 1100
             1001 -> 1001
@@ -113,7 +110,7 @@ students are order alphabeticcally (last_name, first_name)
             1011 - 1111
             1012 - 1112
         """
-        pairD = OrderedDict()
+        # pairD = OrderedDict()
         # Mañana
         pairD[1000] = {'student2': 1100, 'validated': False}
         pairD[1001] = {'student2': 1101, 'validated': False}
