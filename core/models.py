@@ -20,6 +20,12 @@ class Student(AbstractUser):
     USERNAME_FIELD = 'username'
     # EMAIL_FIELD = 'username'
 
+    class meta:
+        ordering = ['last_name', 'first_name']
+
+    def __str__(self):
+        return self.first_name + " " + self.last_name + " " + self.theoryGroup.__str__() + " " + self.labGroup.__str__()
+
 
 class LabGroup(models.Model):
     #identifier = models.IntegerField(primary_key=True)
@@ -30,11 +36,23 @@ class LabGroup(models.Model):
     maxNumberStudents = models.IntegerField(default=0)
     counter = models.IntegerField(default=0)
 
+    class meta:
+        ordering = ['groupName']
+
+    def __str__(self):
+        return self.groupName + " " + self.teacher.__str__() + " " + self.language + " " + str(self.counter) + "/" + str(self.maxNumberStudents) 
+
 
 class Teacher(models.Model):
     #identifier = models.IntegerField(primary_key=True)
     first_name = models.CharField(blank=False, max_length=128)
     family_name = models.CharField(max_length=128)
+
+    class meta:
+        ordering = ['family_name', 'first_name']
+
+    def __str__(self):
+        return self.first_name + " " + self.family_name
 
 
 class Pair(models.Model):
@@ -44,11 +62,20 @@ class Pair(models.Model):
     validated = models.BooleanField(default=False)
     studentBreakRequest = models.ForeignKey('Student', related_name='breakPair', on_delete=models.CASCADE, null=True)
 
+    def __str__(self):
+        return self.student1_id.__str__() + " " + self.student2_id.__str__() + " " + str(self.validated)
+
 
 class GroupConstraints(models.Model):
     #identifier = models.IntegerField(primary_key=True)
     labGroup = models.ForeignKey('LabGroup', on_delete=models.CASCADE)
     theoryGroup = models.ForeignKey('TheoryGroup', on_delete=models.CASCADE)
+
+    class meta:
+        ordering = ['theoryGroup', 'labGroup']
+
+    def __str__(self):
+        return self.theoryGroup.__str__() + " " + self.labGroup.__str__()
 
 
 class TheoryGroup(models.Model):
@@ -56,9 +83,18 @@ class TheoryGroup(models.Model):
     groupName = models.CharField(blank=False, max_length=128)
     language = models.CharField(blank=False, max_length=128)
 
+    class meta:
+        ordering = ['groupName']
+
+    def __str__(self):
+        return self.groupName + " " + self.language
+
 
 class OtherConstraints(models.Model):
     #identifier = models.IntegerField(primary_key=True)
     selectGroupStartDate = models.DateTimeField()
     minGradeTheoryConv = models.FloatField(default=0)
     minGradeLabConv = models.FloatField(default=0)
+
+    def __str__(self):
+        return str(self.selectGroupStartDate) + " " + str(self.minGradeTheoryConv) + " " + str(self.minGradeLabConv)
