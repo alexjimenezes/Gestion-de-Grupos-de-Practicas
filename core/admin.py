@@ -13,12 +13,12 @@ class LabGroupAdmin(admin.ModelAdmin):
 
 
 class TeacherAdmin(admin.ModelAdmin):
-    teacher_display = ['first_name', 'family_name']
+    teacher_display = ['first_name', 'last_name']
     readonly_fields = ('id',)
 
 
 class PairAdmin(admin.ModelAdmin):
-    pair_display = ['student1_id', 'student2_id', 'validated', 'studentBreakRequest']
+    pair_display = ['student1', 'student2', 'validated', 'studentBreakRequest']
     readonly_fields = ('id',)
 
 

@@ -14,6 +14,8 @@ from core.models import (OtherConstraints, Pair, Student,
                          LabGroup, Teacher)
 from collections import OrderedDict
 import pandas as pd
+import datetime
+from django.utils import timezone
 import os
 
 
@@ -50,7 +52,6 @@ class Command(BaseCommand):
         parser.add_argument('studentinfolastyear', type=str, help="""CSV file with student information
         header= NIE,DNI,Apellidos,Nombre,Teoría, grade lab, grade the
         if NIE or DNI == 0 skip this entry and print a warning""")
-        parser.add_argument('auxiliary_info', type=str, help="""txt file with auxiliary information""")
 
     # handle is another compulsory name, do not change it"
     def handle(self, *args, **kwargs):
@@ -60,28 +61,36 @@ class Command(BaseCommand):
         model = kwargs['model']
         cvsStudentFile = kwargs['studentinfo']
         cvsStudentFileGrades = kwargs['studentinfolastyear']
-        txtAux = kwargs['auxiliary_info']
+        txtAux = "./core/management/commands/auxiliary_info.txt"
 
 
         # with open('/tmp/dict.txt', 'r') as dict_file:
         #    dict_text = dict_file.read()
         #   dict_from_file = eval(dict_text)
-        f_aux = open("./core/management/commands/" + txtAux, "r")
-        txt_f_aux = f_aux.read()
-        teacher_data, labgroup_data, theorygroup_data, groupconstraints_data, pairs_data = txt_f_aux.split("====")
+        f_aux = open(txtAux, "r")
+        txt_f_aux = f_aux.readlines()
+        counter = 0
+        data = []
+        data.append("")
+        for line in txt_f_aux:
+            if line == "====\n":
+                counter += 1
+                data.append("")
+            else:
+                data[counter] += line.strip()+"\n"
 
 
         # clean database
         if model == 'all':
             self.cleanDataBase()
         if model == 'teacher' or model == 'all':
-            self.teacher(teacher_data)
+            self.teacher(data[0])
         if model == 'labgroup' or model == 'all':
-            self.labgroup(labgroup_data)
+            self.labgroup(data[1])
         if model == 'theorygroup' or model == 'all':
-            self.theorygroup(theorygroup_data)
+            self.theorygroup(data[2])
         if model == 'groupconstraints' or model == 'all':
-            self.groupconstraints(groupconstraints_data)
+            self.groupconstraints(data[3])
         if model == 'otherconstrains' or model == 'all':
             self.otherconstrains()
         if model == 'student' or model == 'all':
@@ -89,7 +98,7 @@ class Command(BaseCommand):
         if model == 'studentgrade' or model == 'all':
             self.studentgrade(cvsStudentFileGrades)
         if model == 'pair' or model == 'all':
-            self.pair(pairs_data)
+            self.pair(data[4])
 
     def cleanDataBase(self):
         # delete all models stored (clean table)
@@ -107,17 +116,17 @@ class Command(BaseCommand):
         "create teachers here"
         # remove pass and ADD CODE HERE
         teacherD = {}
-        exec(data.replace(" ", ""))
+        exec(data)
 
         for t_id, t_data in teacherD.items():
-            t = Teacher.objects.get_or_create(id=t_id, first_name=t_data['first_name'], family_name=t_data['last_name'])[0]
+            t = Teacher.objects.get_or_create(id=t_id, first_name=t_data['first_name'], last_name=t_data['last_name'])[0]
             t.save()
 
     def labgroup(self, data):
         "add labgroups"
         # remove pass and ADD CODE HERE
         labgroupD = {}
-        exec(data.replace(" ", ""))
+        exec(data)
         for l_id, l_data in labgroupD.items():
             teacher = Teacher.objects.get(id=l_data['teacher'])
             lg = LabGroup.objects.get_or_create(id=l_id, teacher=teacher, groupName=l_data['groupName'], language=l_data['language'], schedule=l_data['schedule'], maxNumberStudents=l_data['maxNumberStudents'])[0]
@@ -127,7 +136,7 @@ class Command(BaseCommand):
         "add theorygroups"
         # remove pass and ADD CODE HERE
         theorygroupD = {}
-        exec(data.replace(" ", ""))
+        exec(data)
         for t_id, t_data in theorygroupD.items():
             t = TheoryGroup.objects.get_or_create(id=t_id, groupName=t_data['groupName'], language=t_data['language'])[0]
             t.save()
@@ -139,7 +148,7 @@ class Command(BaseCommand):
         """
         # remove pass and ADD CODE HERE
         groupconstraintsD = {}
-        exec(data.replace(" ", ""))
+        exec(data)
         for t_id, t_data in groupconstraintsD.items():
             labGroup = LabGroup.objects.get(id=t_data['labGroup'])
             theoryGroup = TheoryGroup.objects.get(id=t_data['theoryGroup'])
@@ -150,11 +159,11 @@ class Command(BaseCommand):
         "create a few valid pairs"
         # remove pass and ADD CODE HERE
         pairD = {}
-        exec(data.replace(" ", ""))
+        exec(data)
         for t_id, t_data in pairD.items():
             student1 = Student.objects.get(id=t_id)
             student2 = Student.objects.get(id=t_data['student2'])
-            t = Pair.objects.get_or_create(id=t_id, student1_id=student1, student2_id=student2, validated=t_data['validated'])[0]
+            t = Pair.objects.get_or_create(id=t_id, student1=student1, student2=student2, validated=t_data['validated'])[0]
             t.save()
 
     def otherconstrains(self):
@@ -166,7 +175,8 @@ class Command(BaseCommand):
         minGradeLabConv = 7
         """
         # remove pass and ADD CODE HERE
-        pass
+        oc = OtherConstraints.objects.get_or_create(selectGroupStartDate=timezone.now()+datetime.timedelta(days=1), minGradeTheoryConv=3, minGradeLabConv=7)
+
 
     def student(self, csvStudentFile):
         # read csv file
