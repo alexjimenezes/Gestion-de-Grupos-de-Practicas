@@ -57,8 +57,6 @@ class ModelTests(TestCase):
                 self.assertFalse(str(t1).find(t1.student1.first_name) == -1)
                 self.assertFalse(str(t1).find(t1.student2.first_name) == -1)
             if isinstance(t1, OtherConstraints):
-                print(t1)
-                print(t1)
                 self.assertFalse(
                     str(t1).find("%.1f" % t1.minGradeLabConv) == -1)
                 self.assertFalse(
