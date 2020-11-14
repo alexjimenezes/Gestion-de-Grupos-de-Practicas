@@ -186,8 +186,9 @@ class Command(BaseCommand):
         counter = 1000
         for index, row in stdReader.iterrows():
             grupoToeria = TheoryGroup.objects.get(id=row['grupo-teoria'])
-            st = Student.objects.get_or_create(id=counter, first_name=row['Nombre'], last_name=row['Apellidos'], username=row['NIE'], password=row['DNI'], theoryGroup=grupoToeria)[0]
-            st.save
+            st = Student.objects.get_or_create(id=counter, first_name=row['Nombre'], last_name=row['Apellidos'], username=row['NIE'], theoryGroup=grupoToeria)[0]
+            st.set_password(row['DNI'])
+            st.save()
             counter += 1
 
     def studentgrade(self, cvsStudentFileGrades):

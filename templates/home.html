@@ -1,0 +1,66 @@
+<!-- templates/home.html -->
+{% extends '_base.html' %}
+{% block title %}Home{% endblock title %}
+{% block content %}
+<h1>EDAT management</h1>
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-warning" role="alert">{{ message }}</div>
+{% endfor %}
+{% endif %}
+
+{% if user.is_authenticated and not user.is_superuser%}
+<ul class="list-group col-sm-8">
+    <li class="list-group-item">Hi! <strong> {{ user.last_name }}, {{ user.first_name }}</strong></li>
+    <li class="list-group-item">
+        {% if user.convalidationGranted %}
+        Your grades have been convalidated!
+        {% else %}
+        Your grades have not been convalidated
+        {% endif %}
+    </li>
+    {% if pairs %}
+    <li class="list-group-item"><a data-toggle="collapse" href="#collapsePairs" role="button" aria-expanded="false"
+            aria-controls="collapsePairs">
+            Click to view Pairs:
+        </a>
+        <div class="collapse" id="collapsePairs">
+            {% for pair in pairs %}
+            <div class="card card-body">
+                <span class="glyphicon glyphicon-user"></span> {{ pair.student1.last_name }}, {{ pair.student1.first_name }} 
+                {% if pair.validated %}
+                <span class="glyphicon glyphicon-ok"> </span>
+                {% else %}
+                <span class="glyphicon glyphicon-remove"> </span>
+                {% endif %}
+                {{ pair.student2.last_name }}, {{ pair.student2.first_name }} <span class="glyphicon glyphicon-user"> </span>
+            </div>
+            {% endfor %}
+        </div>
+    </li>
+    {% else %}
+    <li class="list-group-item">You don't have a pair assigned yet.</li>
+    {% endif %}
+    <li class="list-group-item">
+        {% if user.labGroup %}
+        Lab Group: {{ user.labGroup }}
+        {% else %}
+        You still haven't joined any Lab Groups
+        {% endif %}
+    </li>
+</ul>
+{% else %}
+<h3>Welcome to EDAT's students' management website!</h3>
+<p>In this website you will be able to:</p>
+<ul>
+    <li>View your personal information</li>
+    <li>Get convalidation of your grades from last year</li>
+    <li>Get assigned a pair to work with during the year</li>
+    <li>Select your Laboratory group in a first come first serve fashion</li>
+</ul>
+
+{% endif %}
+
+
+
+{% endblock content %}

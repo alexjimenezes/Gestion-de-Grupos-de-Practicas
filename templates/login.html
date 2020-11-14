@@ -1,0 +1,28 @@
+<!-- templates/login.html -->
+{% extends '_base.html' %}
+{% load staticfiles %}
+{% block title %}
+Login
+{% endblock %}
+{% block content %}
+<h1>Login</h1>
+
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-danger" role="alert">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+<form id="login_form" method="post" action="{% url 'login' %}">
+    <div class="form-group">
+        {% csrf_token %}
+        <label for="username">Username:</label>
+        <input type="text" class="form-control" name="username" value="" size="50" />
+        <br />
+        <label for="pwd">Password:</label>
+        <input type="password" class="form-control" name="password" value="" size="50" />
+        <br />
+        <input type="submit"class="btn btn-primary" value="Submit" />
+    </div>
+</form>
+{% endblock %}
