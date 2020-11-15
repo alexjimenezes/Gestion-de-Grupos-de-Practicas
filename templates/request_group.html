@@ -1,0 +1,12 @@
+<!-- templates/home.html -->
+{% extends '_base.html' %}
+{% block title %}Request a group{% endblock title %}
+
+{% block content %}
+<form action="{% url 'applygroup' %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Submit">
+</form>
+
+{% endblock content %}

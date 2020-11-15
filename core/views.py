@@ -6,6 +6,7 @@ from django.views import View
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from core.models import Pair, OtherConstraints
+from core.forms import RequestPairForm, RequestGroupForm
 
 
 def index(request):
@@ -78,3 +79,32 @@ def convalidation(request):
         messages.success(request, mensaje)
     # Go back to homepage
     return redirect(reverse('index'))
+
+
+@login_required
+def applypair(request):
+    if request.method == 'POST':
+        form = RequestPairForm(request.POST, user=request.user)
+
+        if form.is_valid():
+            return redirect(reverse('index'))
+    else:
+        form = RequestPairForm(user=request.user)
+    return render(request, 'request_pair.html', {'form': form})
+
+
+
+    
+
+
+
+@login_required
+def applygroup(request):
+    if request.method == 'POST':
+        form = RequestGroupForm(request.POST, user=request.user)
+
+        if form.is_valid():
+            return redirect(reverse('index'))
+    else:
+        form = RequestGroupForm(user=request.user)
+    return render(request, 'request_group.html', {'form': form})
