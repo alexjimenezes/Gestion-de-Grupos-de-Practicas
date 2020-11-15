@@ -31,8 +31,13 @@ class RequestGroupForm(forms.Form):
         super(RequestGroupForm, self).__init__(*args, **kwargs)
 
         all_lab = GroupConstraints.objects.filter(theoryGroup = self.user.theoryGroup)
-        labs = LabGroup.objects.filter(groupName = all_lab.labGroup)
+        labs = []
+        for l in all_lab:
+            if l.labGroup.counter != l.labGroup.maxNumberStudents:
+                labs.append(l.labGroup.id)
 
-        self.fields['choices'].queryset = labs
+        print(labs)
+        qset = LabGroup.objects.all().filter(id__in = labs)
+        self.fields['choices'].queryset = qset
 
 
