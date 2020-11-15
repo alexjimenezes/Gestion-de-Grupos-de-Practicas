@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from core.models import Pair
+from core.models import Pair, OtherConstraints
 
 
 def index(request):
@@ -29,7 +29,7 @@ def index(request):
 def user_login(request):
     # If user already logged in redirect to home page
     if request.user.is_authenticated:
-        messages.error(request, 'You are already logged in, please logout to log in with another user!')
+        messages.info(request, 'You are already logged in, please logout to log in with another user!')
         return redirect(reverse('index'))
     else:
         if request.method == 'POST':
@@ -54,4 +54,27 @@ def user_login(request):
 @login_required
 def user_logout(request):
     logout(request)
+    return redirect(reverse('index'))
+
+@login_required
+def convalidation(request):
+    if request.user.convalidationGranted:
+        messages.error(request, 'Your grades have already been convalidated')
+        return redirect(reverse('index'))
+    # Get the grades needed
+    theory = OtherConstraints.objects.all()[0].minGradeTheoryConv
+    lab = OtherConstraints.objects.all()[0].minGradeLabConv
+    # Check if requirements are met
+    if  request.user.gradeTheoryLastYear >= theory \
+        and request.user.gradeLabLastYear >= lab:
+        request.user.convalidationGranted = True
+        request.user.save()
+        mensaje =   "Our team of teachers decided to convalidate your grades.\n This is because your\
+                     theory grade was >= " + str(theory) + " and your lab grade was >= " + str(lab) + ". Congratulations!"
+        messages.success(request, mensaje)
+    else:
+        mensaje =   "Our team of teachers decided to reject your convalidation request.\n This is because your\
+                     theory grade was < " + str(theory) + " and / or your lab grade was < " + str(lab) + ". Congratulations!"
+        messages.success(request, mensaje)
+    # Go back to homepage
     return redirect(reverse('index'))

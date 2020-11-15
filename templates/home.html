@@ -5,7 +5,13 @@
 <h1>EDAT management</h1>
 {% if messages %}
 {% for message in messages %}
-<div class="alert alert-warning" role="alert">{{ message }}</div>
+    {% if message.tags == "info" %}
+        <div class="alert alert-warning" role="alert">{{ message }}</div>
+    {% elif message.tags == "error" %}
+        <div class="alert alert-danger" role="alert">{{ message }}</div>
+    {% elif message.tags == "success" %}
+        <div class="alert alert-success" role="alert">{{ message }}</div>
+    {% endif %}
 {% endfor %}
 {% endif %}
 
@@ -16,7 +22,7 @@
         {% if user.convalidationGranted %}
         Your grades have been convalidated!
         {% else %}
-        Your grades have not been convalidated
+        <a href="{% url 'convalidation' %}"><button class="btn btn-primary" type="submit">Request</button></a> &nbsp; Your grades haven't been convalidated
         {% endif %}
     </li>
     {% if pairs %}
