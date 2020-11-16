@@ -84,7 +84,7 @@ def user_logout(request):
 @login_required
 def convalidation(request):
     if request.user.convalidationGranted:
-        messages.error(request, 'Your grades have already been convalidated')
+        messages.error(request, 'Convalidation: Your grades have already been convalidated')
         return redirect(reverse('index'))
     # Get the grades needed
     theory = OtherConstraints.objects.all()[0].minGradeTheoryConv
@@ -94,11 +94,11 @@ def convalidation(request):
         and request.user.gradeLabLastYear >= lab:
         request.user.convalidationGranted = True
         request.user.save()
-        mensaje =   "Our team of teachers decided to convalidate your grades.\n This is because your\
+        mensaje =   "Convalidation: Our team of teachers decided to convalidate your grades. You satisfy them.\n This is because your\
                      theory grade was >= " + str(theory) + " and your lab grade was >= " + str(lab) + ". Congratulations!"
         messages.success(request, mensaje)
     else:
-        mensaje =   "Our team of teachers decided to reject your convalidation request.\n This is because your\
+        mensaje =   "Convalidation: Our team of teachers decided to reject your convalidation request. You do not satify them.\n This is because your\
                      theory grade was < " + str(theory) + " and / or your lab grade was < " + str(lab) + ". Congratulations!"
         messages.error(request, mensaje)
     # Go back to homepage
@@ -165,7 +165,7 @@ def applygroup(request):
         form = RequestGroupForm(request.POST, user=request.user)
 
         if form.is_valid():
-            group_choice = form.cleaned_data['choices']
+            group_choice = form.cleaned_data['myLabGroup']
             if request.user.labGroup:
                 messages.error(request, "You already have been assigned to a group!")
             else:

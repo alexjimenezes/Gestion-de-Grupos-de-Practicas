@@ -3,6 +3,10 @@
 {% block title %}Request a group{% endblock title %}
 
 {% block content %}
+<input type="hidden" value="Group selection is not active">
+<input type="hidden" value="Select the group you want to join to">
+<br>
+<h3>Apply Group</h3>
 <form action="{% url 'applygroup' %}" method="post">
     {% csrf_token %}
     <br>

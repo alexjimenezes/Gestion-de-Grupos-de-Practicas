@@ -23,7 +23,7 @@ class RequestGroupForm(forms.Form):
     
     #group = forms.ModelChoiceField(queryset=LabGroup.objects.all(), initial=0)
 
-    choices = forms.ModelChoiceField(queryset=LabGroup.objects.none(), label='Select group')
+    myLabGroup = forms.ModelChoiceField(queryset=LabGroup.objects.none(), label='Select group')
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user',None)
         super(RequestGroupForm, self).__init__(*args, **kwargs)
@@ -35,6 +35,6 @@ class RequestGroupForm(forms.Form):
                 labs.append(l.labGroup.id)
 
         qset = LabGroup.objects.all().filter(id__in = labs)
-        self.fields['choices'].queryset = qset
+        self.fields['myLabGroup'].queryset = qset
 
 
