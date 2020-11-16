@@ -5,7 +5,9 @@
 {% block content %}
 <form action="{% url 'applypair' %}" method="post">
     {% csrf_token %}
+    <br>
     {{ form.as_p }}
+    <br>
     <input type="submit" value="Submit">
 </form>
 

@@ -26,32 +26,66 @@
         {% endif %}
     </li>
     {% if pairs %}
-    <li class="list-group-item"><a data-toggle="collapse" href="#collapsePairs" role="button" aria-expanded="false"
-            aria-controls="collapsePairs">
-            Click to view Pairs:
-        </a>
-        <div class="collapse" id="collapsePairs">
-            {% for pair in pairs %}
-            <div class="card card-body">
-                <span class="glyphicon glyphicon-user"></span> {{ pair.student1.last_name }}, {{ pair.student1.first_name }} 
-                {% if pair.validated %}
-                <span class="glyphicon glyphicon-ok"> </span>
-                {% else %}
-                <span class="glyphicon glyphicon-remove"> </span>
+        <li class="list-group-item"><a data-toggle="collapse" href="#collapsePairs" role="button" aria-expanded="false"
+                aria-controls="collapsePairs">
+                Click to view Pairs:
+            </a>
+            <div class="collapse" id="collapsePairs">
+                {% if pairs_accepted %}
+                    <p>Pairs accepted:</p>
+                    {% for pair in pairs %}
+                        {% if pair.validated %}
+                            <div class="card card-body">
+                                <span class="glyphicon glyphicon-user"></span> {{ pair.student1.last_name }}, {{ pair.student1.first_name }}
+                                <span class="glyphicon glyphicon-ok"> </span>
+                                {{ pair.student2.last_name }}, {{ pair.student2.first_name }} <span class="glyphicon glyphicon-user"> </span>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    <hr>
                 {% endif %}
-                {{ pair.student2.last_name }}, {{ pair.student2.first_name }} <span class="glyphicon glyphicon-user"> </span>
+                {% if pending_pairs %}
+                    <p>Pending answers:</p>
+                    {% for pair in pairs %}
+                        {% if not pair.validated and pair.student1.id == user.id%}
+                            <div class="card card-body">
+                                <span class="glyphicon glyphicon-user"></span> {{ pair.student1.last_name }}, {{ pair.student1.first_name }}
+                                <span class="glyphicon glyphicon-menu-right"> </span>
+                                {{ pair.student2.last_name }}, {{ pair.student2.first_name }} <span class="glyphicon glyphicon-user"> </span>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    <hr>
+                {% endif %}
+                {% if pair_to_join %}
+                    <p>Petitions to join:</p>
+                    {% for pair in pairs %}
+                        {% if not pair.validated and pair.student2.id == user.id%}
+                            <div class="card card-body">
+                                <span class="glyphicon glyphicon-user"></span> {{ pair.student2.last_name }}, {{ pair.student2.first_name }}
+                                <span class="glyphicon glyphicon-menu-left"> </span>
+                                {{ pair.student1.last_name }}, {{ pair.student1.first_name }} <span class="glyphicon glyphicon-user"> </span>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
             </div>
-            {% endfor %}
-        </div>
-    </li>
-    {% else %}
-    <li class="list-group-item">You don't have a pair assigned yet.</li>
+        </li>
+    {% endif %}
+    {% if can_request_pair %}
+        <li class="list-group-item">
+            <a href="{% url 'applypair' %}">
+                <button class="btn btn-primary" type="submit">Request</button>
+            </a> &nbsp;You haven't requested a pair yet.
+        </li>
     {% endif %}
     <li class="list-group-item">
         {% if user.labGroup %}
         Lab Group: {{ user.labGroup }}
         {% else %}
-        You still haven't joined any Lab Groups
+        <a href="{% url 'applygroup' %}">
+            <button class="btn btn-primary" type="submit">Request</button>
+        </a> &nbsp;You still haven't joined any Lab Groups
         {% endif %}
     </li>
 </ul>
@@ -66,7 +100,5 @@
 </ul>
 
 {% endif %}
-
-
 
 {% endblock content %}

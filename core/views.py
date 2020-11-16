@@ -5,13 +5,15 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from core.models import Pair, OtherConstraints
+from core.models import Pair, OtherConstraints, LabGroup
 from core.forms import RequestPairForm, RequestGroupForm
+from django.db.models import Q
 
 
 def index(request):
     context_dict = {}
     pairs = []
+    # crear una lista de parejas donde el usuario 
     if request.user.is_authenticated:
         try:
             pairs += Pair.objects.filter(student1=request.user.id)
@@ -22,7 +24,29 @@ def index(request):
         except:
             pass
     
+    can_request_pair = True
+    if  Pair.objects.filter(student1=request.user.id) or \
+        Pair.objects.filter(student2=request.user.id, validated=True):
+        can_request_pair = False
+
+    pairs_accepted = False
+    if  Pair.objects.filter(student1=request.user.id, validated=True) or\
+        Pair.objects.filter(student2=request.user.id, validated=True):
+        pairs_accepted = True
+    
+    pending_pairs = False
+    if  Pair.objects.filter(student1=request.user.id, validated=False):
+        pending_pairs = True
+    
+    pair_to_join = False
+    if Pair.objects.filter(student2=request.user.id, validated=False):
+        pair_to_join = True
+
     context_dict['pairs'] = pairs
+    context_dict['can_request_pair'] = can_request_pair
+    context_dict['pairs_accepted'] = pairs_accepted
+    context_dict['pending_pairs'] = pending_pairs
+    context_dict['pair_to_join'] = pair_to_join
 
     return render(request, 'home.html', context=context_dict)
 
@@ -76,17 +100,53 @@ def convalidation(request):
     else:
         mensaje =   "Our team of teachers decided to reject your convalidation request.\n This is because your\
                      theory grade was < " + str(theory) + " and / or your lab grade was < " + str(lab) + ". Congratulations!"
-        messages.success(request, mensaje)
+        messages.error(request, mensaje)
     # Go back to homepage
     return redirect(reverse('index'))
 
 
 @login_required
 def applypair(request):
+    pairs = Pair.objects.all()
+    for p in pairs:
+        # Si la pareja esta validada y el usuario forma parte de ella volver a index con el respectivo
+        # mensaje de error
+        if p.validated:
+            if p.student1.id == request.user.id or p.student2.id == request.user.id:
+                messages.error(request, "You are already in an established pair. In case you and your partner want to split,\
+                    both of you should send a request to disolve the pair.")
+                return redirect(reverse('index'))
+        # Si la pareja no está validada pero el usuario ha solicitado crear una pareja volver a index
+        # con el respectivo mensaje de error
+        elif p.student1.id == request.user.id:
+            messages.error(request, "You have already requested to be in a pair. Please, either wait for your partner to\
+                or request to disolve your petition. ")
+            return redirect(reverse('index'))
+
     if request.method == 'POST':
         form = RequestPairForm(request.POST, user=request.user)
 
         if form.is_valid():
+            choice = form.cleaned_data['choices']
+            # Comprobamos si nuestro usuario ya forma parte de alguna pareja validada
+            pareja_validada = Pair.objects.filter(validated=True) & (Pair.objects.filter(student1=request.user) | Pair.objects.filter(student2=request.user))
+            # O si ya ha emitido una peticion
+            pareja1 = Pair.objects.filter(student1=request.user)
+            # O si le han emitido una peticion
+            pareja2 = Pair.objects.filter(student1=choice, student2=request.user)
+            if pareja1 or pareja_validada:
+                messages.error(request, "User with a pending request cannot send a new one.")
+            elif pareja2:
+                p = pareja2[0]
+                p.validated = True
+                p.save()
+                messages.success(request, "Your pair has been successully validated!")
+                Pair.objects.filter(student2=request.user, validated=False).delete()
+                Pair.objects.filter(student2=choice, validated=False).delete()
+            else:
+                p = Pair.objects.create(student1=request.user, student2=choice)
+                p.save()
+                messages.success(request, "Your request has been successfully created!")
             return redirect(reverse('index'))
     else:
         form = RequestPairForm(user=request.user)
@@ -96,14 +156,25 @@ def applypair(request):
 
     
 
-
-
 @login_required
 def applygroup(request):
+    if request.user.labGroup:
+        messages.error(request, "You already have been assigned to a group!")
+        return redirect(reverse('index'))
     if request.method == 'POST':
         form = RequestGroupForm(request.POST, user=request.user)
 
         if form.is_valid():
+            group_choice = form.cleaned_data['choices']
+            if request.user.labGroup:
+                messages.error(request, "You already have been assigned to a group!")
+            else:
+                request.user.labGroup = group_choice
+                lg = LabGroup.objects.get(pk=group_choice.id)
+                lg.counter = lg.counter + 1
+                lg.save()
+                request.user.save()
+                    
             return redirect(reverse('index'))
     else:
         form = RequestGroupForm(user=request.user)

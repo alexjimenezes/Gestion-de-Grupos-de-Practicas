@@ -4,7 +4,7 @@ from core.models import GroupConstraints, LabGroup, Student, Pair
 from django.forms import ModelChoiceField
 
 class RequestPairForm(forms.Form):
-    choices = forms.ModelChoiceField(queryset=Student.objects.none(), label='select student')
+    choices = forms.ModelChoiceField(queryset=Student.objects.none(), label='Select student')
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user',None)
         super(RequestPairForm, self).__init__(*args, **kwargs)
@@ -13,11 +13,9 @@ class RequestPairForm(forms.Form):
         for o in students:
             students_id.append(o.student1.id)
             students_id.append(o.student2.id)
-        qset = Student.objects.all().exclude(id = self.user.id).exclude(id__in = students_id).order_by('first_name')
+        students_id.append(self.user.id)
+        qset = Student.objects.all().exclude(id__in = students_id).order_by('first_name')
         self.fields['choices'].queryset = qset
-    
-    #qset = Student.objects.filter(id != user.id)
-    #name = forms.ModelChoiceField(queryset=qset, initial=0)
 
 
 
@@ -25,7 +23,7 @@ class RequestGroupForm(forms.Form):
     
     #group = forms.ModelChoiceField(queryset=LabGroup.objects.all(), initial=0)
 
-    choices = forms.ModelChoiceField(queryset=LabGroup.objects.none(), label='select student')
+    choices = forms.ModelChoiceField(queryset=LabGroup.objects.none(), label='Select group')
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user',None)
         super(RequestGroupForm, self).__init__(*args, **kwargs)
@@ -36,7 +34,6 @@ class RequestGroupForm(forms.Form):
             if l.labGroup.counter != l.labGroup.maxNumberStudents:
                 labs.append(l.labGroup.id)
 
-        print(labs)
         qset = LabGroup.objects.all().filter(id__in = labs)
         self.fields['choices'].queryset = qset
 
