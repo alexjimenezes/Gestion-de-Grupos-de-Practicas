@@ -3,6 +3,9 @@
 {% block title %}Request a pair{% endblock title %}
 
 {% block content %}
+<br>
+<h3>Apply Pair</h3>
+<input type="hidden" value="Select the second">
 <form action="{% url 'applypair' %}" method="post">
     {% csrf_token %}
     <br>

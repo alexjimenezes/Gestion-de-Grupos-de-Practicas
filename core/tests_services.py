@@ -669,6 +669,8 @@ class GroupServiceTests(ServiceBaseTest):
                     theoryGroup=theoryGroup,
                     labGroup=labGroup).exists()
                 if valid:
+                    print(Student.objects.filter(
+                        pk=self.user1.id))
                     self.assertTrue(Student.objects.filter(
                         pk=self.user1.id,
                         labGroup=labGroup).exists(),
