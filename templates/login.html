@@ -12,7 +12,7 @@ Login
     <div class="alert alert-danger" role="alert">{{ message }}</div>
     {% endfor %}
 {% endif %}
-<p>Please login|Por favor autentiquese</p>
+<input type="hidden" value="Please login|Por favor autentiquese">
 <form id="login_form" method="post" action="{% url 'login' %}">
     <div class="form-group">
         {% csrf_token %}

@@ -112,13 +112,13 @@ def applypair(request):
         # mensaje de error
         if p.validated:
             if p.student1.id == request.user.id or p.student2.id == request.user.id:
-                messages.error(request, "You are already in an established pair. In case you and your partner want to split,\
+                messages.error(request, "User has already selected a pair error: You are already in an established pair. In case you and your partner want to split,\
                     both of you should send a request to disolve the pair.")
                 return redirect(reverse('index'))
         # Si la pareja no está validada pero el usuario ha solicitado crear una pareja volver a index
         # con el respectivo mensaje de error
         elif p.student1.id == request.user.id:
-            messages.error(request, "You have already requested to be in a pair. Please, either wait for your partner to\
+            messages.error(request, "User has already selected a pair error: You have already requested to be in a pair. Please, either wait for your partner to\
                 or request to disolve your petition. ")
             return redirect(reverse('index'))
 

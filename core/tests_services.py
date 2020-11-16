@@ -667,6 +667,7 @@ class GroupServiceTests(ServiceBaseTest):
                 self.client2.post(reverse(GROUP_SERVICE),
                                   data=data,
                                   follow=True)
+                print(self.user2)
                 valid = GroupConstraints.objects.filter(
                     theoryGroup=theoryGroup,
                     labGroup=labGroup).exists()

@@ -17,9 +17,7 @@ class RequestPairForm(forms.Form):
         qset = Student.objects.all().exclude(id__in = students_id).order_by('first_name')
         new_choices = []
         for q in qset:
-            # print(q)
-            new_choices.append((q.id, q.first_name + " " + q.last_name + " - " + str(q.theoryGroup) + " - " + str(q.labGroup)))
-            # self.fields['choices'].choices = [('1', 'pepe'),('2', 'pepe')]
+            new_choices.append((q.id, q.last_name + ", " + q.first_name + " - " + str(q.theoryGroup) + " - " + str(q.labGroup)))
         self.fields['secondMemberGroup'].choices = new_choices
 
 
@@ -34,7 +32,7 @@ class RequestGroupForm(forms.Form):
         all_lab = GroupConstraints.objects.filter(theoryGroup = self.user.theoryGroup)
         labs = []
         for l in all_lab:
-            if l.labGroup.counter != l.labGroup.maxNumberStudents:
+            if l.labGroup.counter < l.labGroup.maxNumberStudents:
                 labs.append(l.labGroup.id)
 
         qset = LabGroup.objects.all().filter(id__in = labs)
