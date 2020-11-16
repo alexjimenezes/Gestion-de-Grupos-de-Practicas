@@ -1,10 +1,10 @@
 from django import forms
 # from core.models import Pair
 from core.models import GroupConstraints, LabGroup, Student, Pair
-from django.forms import ModelChoiceField
+from django.forms import ChoiceField
 
 class RequestPairForm(forms.Form):
-    choices = forms.ModelChoiceField(queryset=Student.objects.none(), label='Select student')
+    secondMemberGroup = forms.ChoiceField(choices=[], label='Select student')
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user',None)
         super(RequestPairForm, self).__init__(*args, **kwargs)
@@ -15,15 +15,18 @@ class RequestPairForm(forms.Form):
             students_id.append(o.student2.id)
         students_id.append(self.user.id)
         qset = Student.objects.all().exclude(id__in = students_id).order_by('first_name')
-        self.fields['choices'].queryset = qset
+        new_choices = []
+        for q in qset:
+            # print(q)
+            new_choices.append((q.id, q.first_name + " " + q.last_name + " - " + str(q.theoryGroup) + " - " + str(q.labGroup)))
+            # self.fields['choices'].choices = [('1', 'pepe'),('2', 'pepe')]
+        self.fields['secondMemberGroup'].choices = new_choices
 
 
 
 class RequestGroupForm(forms.Form):
     
-    #group = forms.ModelChoiceField(queryset=LabGroup.objects.all(), initial=0)
-
-    myLabGroup = forms.ModelChoiceField(queryset=LabGroup.objects.none(), label='Select group')
+    myLabGroup = forms.ChoiceField(choices=[], label='Select group')
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user',None)
         super(RequestGroupForm, self).__init__(*args, **kwargs)
@@ -35,6 +38,9 @@ class RequestGroupForm(forms.Form):
                 labs.append(l.labGroup.id)
 
         qset = LabGroup.objects.all().filter(id__in = labs)
-        self.fields['myLabGroup'].queryset = qset
+        new_choices = []
+        for q in qset:
+            new_choices.append((q.id, q))
+        self.fields['myLabGroup'].choices = new_choices
 
 

@@ -187,6 +187,7 @@ class ServiceBaseTest(TestCase):
             # print(definition["pattern"], self.decode(response.content))
             m = re.search(definition["pattern"], self.decode(response.content))
         self.assertTrue(m)
+        # print(m)
         return m
 
     def is_login(self, response):
@@ -200,6 +201,7 @@ class ServiceBaseTest(TestCase):
 
     def is_landing_autenticated(self, response, user):
         m = self.validate_response(LANDING_PAGE, response)
+        # print(m.group("username"))
         self.assertEqual(m.group("username"), user.first_name)
 
     def is_break_pair(self, response):
@@ -560,7 +562,7 @@ class GroupServiceTests(ServiceBaseTest):
         # pick valid groups
         # for each theory group
         for theoryGroup in tgQS:
-            print(theoryGroup.groupName)
+            # print(theoryGroup.groupName)
             self.user1.theoryGroup = theoryGroup
             self.user1.save()
             # connect to create group page
@@ -568,7 +570,7 @@ class GroupServiceTests(ServiceBaseTest):
             # check labgroups offered are right
             gcQS = GroupConstraints.objects.filter(theoryGroup=theoryGroup)
             for groupConstraint in gcQS:
-                print("    ", groupConstraint.labGroup.groupName)
+                # print("    ", groupConstraint.labGroup.groupName)
                 m = re.search(groupConstraint.labGroup.groupName,
                               self.decode(response.content))
                 self.assertTrue(m)
@@ -592,8 +594,8 @@ class GroupServiceTests(ServiceBaseTest):
                     theoryGroup=theoryGroup,
                     labGroup=labGroup).exists()
                 if valid:
-                    print(theoryGroup.groupName, "-->",
-                          labGroup.groupName, ", valid")
+                    ''''print(theoryGroup.groupName, "-->",
+                          labGroup.groupName, ", valid")'''
                     self.assertTrue(Student.objects.filter(
                         pk=self.user1.id,
                         labGroup=labGroup).exists())
@@ -601,8 +603,8 @@ class GroupServiceTests(ServiceBaseTest):
                     counter += 1
                     self.assertEqual(labGroup.counter, counter)
                 else:
-                    print(theoryGroup.groupName, "-->",
-                          labGroup.groupName, ", Invalid")
+                    '''print(theoryGroup.groupName, "-->",
+                          labGroup.groupName, ", Invalid")'''
                     self.assertFalse(Student.objects.filter(
                         pk=self.user1.id,
                         labGroup=labGroup).exists())
@@ -628,7 +630,7 @@ class GroupServiceTests(ServiceBaseTest):
         p = Pair(student1=self.user1, student2=self.user2, validated=True)
         p.save()
         for theoryGroup in tgQS:
-            print(theoryGroup.groupName)
+            # print(theoryGroup.groupName)
             # user2 group is irrelevant
             self.user2.theoryGroup = theoryGroup
             self.user2.save()
@@ -637,7 +639,7 @@ class GroupServiceTests(ServiceBaseTest):
             # check labgroups offered are right
             gcQS = GroupConstraints.objects.filter(theoryGroup=theoryGroup)
             for groupConstraint in gcQS:
-                print("    ", groupConstraint.labGroup.groupName)
+                # print("    ", groupConstraint.labGroup.groupName)
                 # print(groupConstraint.labGroup.groupName)
                 # print(self.decode(response.content))
                 m = re.search(groupConstraint.labGroup.groupName,
@@ -669,8 +671,6 @@ class GroupServiceTests(ServiceBaseTest):
                     theoryGroup=theoryGroup,
                     labGroup=labGroup).exists()
                 if valid:
-                    print(Student.objects.filter(
-                        pk=self.user1.id))
                     self.assertTrue(Student.objects.filter(
                         pk=self.user1.id,
                         labGroup=labGroup).exists(),

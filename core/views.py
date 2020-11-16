@@ -5,9 +5,8 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from core.models import Pair, OtherConstraints, LabGroup
+from core.models import Student, Pair, OtherConstraints, LabGroup
 from core.forms import RequestPairForm, RequestGroupForm
-from django.db.models import Q
 
 
 def index(request):
@@ -127,13 +126,14 @@ def applypair(request):
         form = RequestPairForm(request.POST, user=request.user)
 
         if form.is_valid():
-            choice = form.cleaned_data['choices']
+            choice = form.cleaned_data['secondMemberGroup']
+            student_chosen = Student.objects.get(id=choice)
             # Comprobamos si nuestro usuario ya forma parte de alguna pareja validada
             pareja_validada = Pair.objects.filter(validated=True) & (Pair.objects.filter(student1=request.user) | Pair.objects.filter(student2=request.user))
             # O si ya ha emitido una peticion
             pareja1 = Pair.objects.filter(student1=request.user)
             # O si le han emitido una peticion
-            pareja2 = Pair.objects.filter(student1=choice, student2=request.user)
+            pareja2 = Pair.objects.filter(student1=student_chosen, student2=request.user)
             if pareja1 or pareja_validada:
                 messages.error(request, "User with a pending request cannot send a new one.")
             elif pareja2:
@@ -142,9 +142,9 @@ def applypair(request):
                 p.save()
                 messages.success(request, "Your pair has been successully validated!")
                 Pair.objects.filter(student2=request.user, validated=False).delete()
-                Pair.objects.filter(student2=choice, validated=False).delete()
+                Pair.objects.filter(student2=student_chosen, validated=False).delete()
             else:
-                p = Pair.objects.create(student1=request.user, student2=choice)
+                p = Pair.objects.create(student1=request.user, student2=student_chosen)
                 p.save()
                 messages.success(request, "Your request has been successfully created!")
             return redirect(reverse('index'))
@@ -165,7 +165,7 @@ def applygroup(request):
         form = RequestGroupForm(request.POST, user=request.user)
 
         if form.is_valid():
-            group_choice = form.cleaned_data['myLabGroup']
+            group_choice = LabGroup.objects.get(id = form.cleaned_data['myLabGroup'])
             if request.user.labGroup:
                 messages.error(request, "You already have been assigned to a group!")
             else:

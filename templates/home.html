@@ -3,6 +3,7 @@
 {% block title %}Home{% endblock title %}
 {% block content %}
 <h1>EDAT management</h1>
+
 {% if messages %}
 {% for message in messages %}
     {% if message.tags == "info" %}
@@ -17,7 +18,7 @@
 
 {% if user.is_authenticated and not user.is_superuser%}
 <ul class="list-group col-sm-8">
-    <li class="list-group-item">Hi! <strong> {{ user.last_name }}, {{ user.first_name }}</strong></li>
+    <li class="list-group-item">Summary page for <b>{{ user.first_name }} {{ user.last_name }}</b></li>
     <li class="list-group-item">
         {% if user.convalidationGranted %}
         Your grades have been convalidated!
