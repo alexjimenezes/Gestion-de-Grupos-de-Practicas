@@ -80,6 +80,13 @@
             </a> &nbsp;You haven't requested a pair yet.
         </li>
     {% endif %}
+    {% if pairs %}
+        <li class="list-group-item">
+            <a href="{% url 'breakpair' %}">
+                <button class="btn btn-danger" type="submit">Disolve</button>
+            </a> &nbsp;You can break current pairs here.
+        </li>
+    {% endif %}
     <li class="list-group-item">
         {% if user.labGroup %}
         Lab Group: {{ user.labGroup }}

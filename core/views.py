@@ -6,7 +6,7 @@ from django.views import View
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from core.models import Student, Pair, OtherConstraints, LabGroup
-from core.forms import RequestPairForm, RequestGroupForm
+from core.forms import RequestPairForm, RequestGroupForm, BreakPairForm
 
 
 def index(request):
@@ -98,7 +98,7 @@ def convalidation(request):
         messages.success(request, mensaje)
     else:
         mensaje =   "Convalidation: Our team of teachers decided to reject your convalidation request. You do not satify them.\n This is because your\
-                     theory grade was < " + str(theory) + " and / or your lab grade was < " + str(lab) + ". Congratulations!"
+                     theory grade was < " + str(theory) + " and / or your lab grade was < " + str(lab) + "."
         messages.error(request, mensaje)
     # Go back to homepage
     return redirect(reverse('index'))
@@ -153,8 +153,41 @@ def applypair(request):
     return render(request, 'request_pair.html', {'form': form})
 
 
+@login_required
+def breakpair(request):
+    if request.user.labGroup:
+        messages.error(request, "Break Pair: You cannot break a pair if you have already chosen a group.")
+        return redirect(reverse('index'))
 
-    
+    if not (Pair.objects.filter(student1=request.user) | Pair.objects.filter(student2=request.user)):
+        messages.error(request, "Break Pair: You do not have any pair to break.")
+        return redirect(reverse('index'))
+
+    if request.method == 'POST':
+        form = BreakPairForm(request.POST, user=request.user)
+        if form.is_valid():
+            choice = Pair.objects.get(id = form.cleaned_data['myPair'])
+            if choice.student1 == request.user:
+                other_student = choice.student2
+            else:
+                other_student = choice.student1
+            if choice.validated:
+                if not choice.studentBreakRequest or choice.studentBreakRequest == request.user:
+                    choice.studentBreakRequest = request.user
+                    choice.save()
+                    messages.success(request,  "Break Pair: The pair selected has been marked as non validated.\
+                                                Once your pair mate sybmits a request to break it will be deleted.")
+                elif choice.studentBreakRequest == other_student: 
+                    choice.delete()
+                    messages.success(request,  "Break Pair: The pair selected has been successfully removed.")
+            else:
+                choice.delete()
+                messages.success(request,  "Break Pair: The pair selected has been successfully removed.")
+            return redirect(reverse('index'))
+    else:
+        form = BreakPairForm(user=request.user)
+    return render(request, 'break_pair.html', {'form': form})
+
 
 @login_required
 def applygroup(request):

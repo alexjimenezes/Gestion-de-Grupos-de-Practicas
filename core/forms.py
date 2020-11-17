@@ -20,7 +20,26 @@ class RequestPairForm(forms.Form):
             new_choices.append((q.id, q.last_name + ", " + q.first_name + " - " + str(q.theoryGroup) + " - " + str(q.labGroup)))
         self.fields['secondMemberGroup'].choices = new_choices
 
-
+class BreakPairForm(forms.Form):
+    myPair = forms.ChoiceField(choices=[], widget=forms.RadioSelect, label='Select pair')
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user',None)
+        super(BreakPairForm, self).__init__(*args, **kwargs)
+        pairs = Pair.objects.filter(student1=self.user) | Pair.objects.filter(student2=self.user)
+        pairs = pairs.order_by('validated')
+        new_choices = []
+        for p in pairs:
+            if p.validated:
+                new_choices.append((p.id,   p.student1.first_name + " " + p.student1.last_name +
+                                            " + " +
+                                            p.student2.first_name + " " + p.student2.last_name
+                                            ))
+            else:
+                new_choices.append((p.id,   p.student1.first_name + " " + p.student1.last_name +
+                                            " > " +
+                                            p.student2.first_name + " " + p.student2.last_name
+                                            ))
+        self.fields['myPair'].choices = new_choices
 
 class RequestGroupForm(forms.Form):
     
