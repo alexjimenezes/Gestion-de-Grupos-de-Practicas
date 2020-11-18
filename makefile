@@ -44,8 +44,19 @@ clear_update_db:
 test_datamodel:
 	$(CMD) test core.tests_models
 
+coverage_datamodel:
+	coverage erase
+	coverage run --omit="*/test*" --source=core ./manage.py test core.tests_models
+	coverage report -m -i
+
+
 test_services:
 	$(CMD) test core.tests_services
+
+coverage_services:
+	coverage erase
+	coverage run --omit="*/test*" --source=core ./manage.py test core.tests_services
+	coverage report -m -i
 
 #test_heroku:
 #	$(HEROKU) $(CMD) test datamodel.tests_models.GameModelTests --keepdb & wait

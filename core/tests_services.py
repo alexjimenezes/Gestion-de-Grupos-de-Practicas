@@ -773,7 +773,7 @@ class GroupServiceTests(ServiceBaseTest):
                         labGroup=labGroup).exists())
                     labGroup = LabGroup(pk=labGroupId)
                     self.assertEqual(labGroup.counter, counter)
-
+                    
     def test_43_select_group_pair_user2_request(self):
         """Select group for pairs"""
         # login
@@ -793,7 +793,7 @@ class GroupServiceTests(ServiceBaseTest):
         p = Pair(student1=self.user1, student2=self.user2, validated=True)
         p.save()
         for theoryGroup in tgQS:
-            # print(theoryGroup.groupName)
+            print(theoryGroup.groupName)
             # user2 group is irrelevant
             self.user2.theoryGroup = theoryGroup
             self.user2.save()
@@ -802,7 +802,7 @@ class GroupServiceTests(ServiceBaseTest):
             # check labgroups offered are right
             gcQS = GroupConstraints.objects.filter(theoryGroup=theoryGroup)
             for groupConstraint in gcQS:
-                # print("    ", groupConstraint.labGroup.groupName)
+                print("    ", groupConstraint.labGroup.groupName)
                 # print(groupConstraint.labGroup.groupName)
                 # print(self.decode(response.content))
                 m = re.search(groupConstraint.labGroup.groupName,
@@ -830,7 +830,6 @@ class GroupServiceTests(ServiceBaseTest):
                 self.client2.post(reverse(GROUP_SERVICE),
                                   data=data,
                                   follow=True)
-                #print(self.user2)
                 valid = GroupConstraints.objects.filter(
                     theoryGroup=theoryGroup,
                     labGroup=labGroup).exists()

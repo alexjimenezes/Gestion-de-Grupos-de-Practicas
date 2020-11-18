@@ -129,7 +129,9 @@ def applypair(request):
             choice = form.cleaned_data['secondMemberGroup']
             student_chosen = Student.objects.get(id=choice)
             # Comprobamos si nuestro usuario ya forma parte de alguna pareja validada
+            
             pareja_validada = Pair.objects.filter(validated=True) & (Pair.objects.filter(student1=request.user) | Pair.objects.filter(student2=request.user))
+
             # O si ya ha emitido una peticion
             pareja1 = Pair.objects.filter(student1=request.user)
             # O si le han emitido una peticion
@@ -160,13 +162,16 @@ def breakpair(request):
         return redirect(reverse('index'))
 
     if not (Pair.objects.filter(student1=request.user) | Pair.objects.filter(student2=request.user)):
-        messages.error(request, "Break Pair: You do not have any pair to break.")
+        messages.error(request, "Break Pair: Could not process your request, currently you do not have any pair to break.")
         return redirect(reverse('index'))
 
     if request.method == 'POST':
         form = BreakPairForm(request.POST, user=request.user)
         if form.is_valid():
             choice = Pair.objects.get(id = form.cleaned_data['myPair'])
+            if not choice:
+                messages.error("Break Pair: Could not process your request, the information provided does not match any pair.")
+                return redirect(reverse('index'))
             if choice.student1 == request.user:
                 other_student = choice.student2
             else:
@@ -200,13 +205,30 @@ def applygroup(request):
         if form.is_valid():
             group_choice = LabGroup.objects.get(id = form.cleaned_data['myLabGroup'])
             if request.user.labGroup:
-                messages.error(request, "You already have been assigned to a group!")
+                messages.error(request, "You have been assigned to a group already!")
             else:
-                request.user.labGroup = group_choice
                 lg = LabGroup.objects.get(pk=group_choice.id)
-                lg.counter = lg.counter + 1
-                lg.save()
-                request.user.save()
+
+                qset = Pair.objects.filter(validated=True) & (Pair.objects.filter(student1=request.user) | Pair.objects.filter(student2=request.user))
+                if qset:
+                    if lg.counter + 2 <= lg.maxNumberStudents:
+                        st1 = qset.first().student1
+                        st1.labGroup = lg
+                        st1.save()
+                        st2 = qset.first().student2
+                        st2.labGroup = lg
+                        st2.save()
+                        lg.counter += 2
+                        lg.save()
+                        messages.success(request, "You and your partner have been assigned to the selected group.")
+                    else:
+                        messages.error(request, "There is not enouhg space for a pair in this group! Try a different one.")
+                else:
+                    lg.counter += 1
+                    lg.save()
+                    request.user.labGroup = lg
+                    request.user.save()
+                    messages.success(request, "You and your partner have been assigned to the selected group.")
                     
             return redirect(reverse('index'))
     else:
