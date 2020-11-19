@@ -30,7 +30,7 @@ SECRET_KEY = '#h%41#t43=pr^8qfv#o#_$j*&*#f_)fqf@br(^9)u(#xzr+=-n'
 DEBUG = False
 
 ALLOWED_HOSTS = []
-
+ 
 
 # Application definition
 
@@ -125,7 +125,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticHeroku')
 STATIC_URL = '/static/'
 
 LOGIN_REDIRECT_URL = 'home'
