@@ -29,7 +29,7 @@ SECRET_KEY = '#h%41#t43=pr^8qfv#o#_$j*&*#f_)fqf@br(^9)u(#xzr+=-n'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+#ALLOWED_HOSTS = []
  
 
 # Application definition
@@ -127,6 +127,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticHeroku')
 STATIC_URL = '/static/'
+ALLOWED_HOSTS = [u'labassing.herokuapp.com', u'localhost', u'127.0.0.1']
 
 LOGIN_REDIRECT_URL = 'home'
 
