@@ -63,9 +63,9 @@ coverage_services:
 #	$(HEROKU) $(CMD) test datamodel.tests_models.MoveModelTests --keepdb & wait
 #	$(HEROKU) $(CMD) test datamodel.tests_models.my_tests --keepdb & wait
 #
-#test_query:
-#	python3 test_query.py
-#
+test_query:
+	$(CMD) test core.test_query
+
 #test_query_heroku:
 #	$(HEROKU) python3 test_query.py
 #
