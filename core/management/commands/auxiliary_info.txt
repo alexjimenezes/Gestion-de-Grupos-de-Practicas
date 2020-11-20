@@ -11,7 +11,7 @@
                        'last_name': 'Diaz Garcia',}
         teacherD[4] = {'id': 4,  # 1292/1251V 17:00
                        'first_name': 'Alvaro',
-                       'last_name': 'Del Val Latorre',}
+                       'last_name': 'del Val Latorre',}
         teacherD[5] = {'id': 5,  # 1201 X 18:00
                        'first_name': 'Roberto',
                        'last_name': 'Marabini Ruiz',}
