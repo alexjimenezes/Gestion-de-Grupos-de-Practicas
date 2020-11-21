@@ -29,7 +29,7 @@ SECRET_KEY = '#h%41#t43=pr^8qfv#o#_$j*&*#f_)fqf@br(^9)u(#xzr+=-n'
 DEBUG = False
 
 #ALLOWED_HOSTS = []
- 
+
 
 # Application definition
 
@@ -61,7 +61,7 @@ ROOT_URLCONF = 'labassign.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [TEMPLATE_DIR,],
+        'DIRS': [TEMPLATE_DIR, ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
