@@ -1,0 +1,66 @@
+(psienv) alex@hp:~/Documents/4/PSI/PSI-P2/labassing$ make coverage_datamodel 
+coverage erase
+coverage run --omit="*/test*" --source=core ./manage.py test core.tests_models
+Creating test database for alias 'default'...
+System check identified no issues (0 silenced).
+/home/alex/Documents/4/PSI/PSI-P2/labassing
+Testing Teachers:
+Testing Labgroup:
+Testing TheoryGroup:
+Testing GroupConstraints:
+Testing Student:
+Testing Pair:
+Testing OtherConstraints:
+.
+----------------------------------------------------------------------
+Ran 1 test in 23.614s
+
+OK
+Destroying test database for alias 'default'...
+coverage report -m -i
+Name                                   Stmts   Miss  Cover   Missing
+--------------------------------------------------------------------
+core/__init__.py                           0      0   100%
+core/admin.py                             28      0   100%
+core/apps.py                               3      3     0%   1-5
+core/forms.py                             47     35    26%   9-21, 26-42, 48-61
+core/management/commands/populate.py     113      3    97%   36-52
+core/migrations/0001_initial.py           10      0   100%
+core/migrations/__init__.py                0      0   100%
+core/models.py                            62      0   100%
+core/urls.py                               3      0   100%
+core/views.py                            172    151    12%   13-50, 55-75, 80-81, 85-104, 109-155, 160-194, 199-236
+--------------------------------------------------------------------
+TOTAL                                    438    192    56%
+
+
+
+
+
+
+(psienv) alex@hp:~/Documents/4/PSI/PSI-P2/labassing$ make coverage_services 
+coverage erase
+coverage run --omit="*/test*" --source=core ./manage.py test core.tests_services
+Creating test database for alias 'default'...
+System check identified no issues (0 silenced).
+.........................
+----------------------------------------------------------------------
+Ran 25 tests in 18.478s
+
+OK
+Destroying test database for alias 'default'...
+coverage report -m -i
+Name                                   Stmts   Miss  Cover   Missing
+--------------------------------------------------------------------
+core/__init__.py                           0      0   100%
+core/admin.py                             28      0   100%
+core/apps.py                               3      3     0%   1-5
+core/forms.py                             47      0   100%
+core/management/commands/populate.py     113     45    60%   36-52, 58-83, 162-169, 187-194, 200-202
+core/migrations/0001_initial.py           10      0   100%
+core/migrations/__init__.py                0      0   100%
+core/models.py                            62      5    92%   21, 60, 71, 82, 91
+core/urls.py                               3      0   100%
+core/views.py                            172     20    88%   19-20, 23-24, 56-57, 68-71, 115-117, 140, 161-162, 173-174, 200-201, 208, 225
+--------------------------------------------------------------------
+TOTAL                                    438     73    83%

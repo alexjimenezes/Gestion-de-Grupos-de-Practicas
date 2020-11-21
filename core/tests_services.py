@@ -793,7 +793,7 @@ class GroupServiceTests(ServiceBaseTest):
         p = Pair(student1=self.user1, student2=self.user2, validated=True)
         p.save()
         for theoryGroup in tgQS:
-            print(theoryGroup.groupName)
+            # print(theoryGroup.groupName)
             # user2 group is irrelevant
             self.user2.theoryGroup = theoryGroup
             self.user2.save()
@@ -802,7 +802,7 @@ class GroupServiceTests(ServiceBaseTest):
             # check labgroups offered are right
             gcQS = GroupConstraints.objects.filter(theoryGroup=theoryGroup)
             for groupConstraint in gcQS:
-                print("    ", groupConstraint.labGroup.groupName)
+                # print("    ", groupConstraint.labGroup.groupName)
                 # print(groupConstraint.labGroup.groupName)
                 # print(self.decode(response.content))
                 m = re.search(groupConstraint.labGroup.groupName,
