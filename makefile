@@ -58,11 +58,11 @@ coverage_services:
 	coverage run --omit="*/test*" --source=core ./manage.py test core.tests_services
 	coverage report -m -i
 
-#test_heroku:
-#	$(HEROKU) $(CMD) test datamodel.tests_models.GameModelTests --keepdb & wait
-#	$(HEROKU) $(CMD) test datamodel.tests_models.MoveModelTests --keepdb & wait
-#	$(HEROKU) $(CMD) test datamodel.tests_models.my_tests --keepdb & wait
-#
+test_heroku:
+	$(HEROKU) $(CMD) test datamodel.tests_models.GameModelTests --keepdb & wait
+	$(HEROKU) $(CMD) test datamodel.tests_models.MoveModelTests --keepdb & wait
+	$(HEROKU) $(CMD) test datamodel.tests_models.my_tests --keepdb & wait
+
 test_query:
 	$(CMD) test core.test_query
 
