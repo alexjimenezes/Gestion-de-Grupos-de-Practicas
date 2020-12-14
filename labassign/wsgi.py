@@ -15,4 +15,7 @@ from dj_static import Cling
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'labassign.settings')
 
 application = Cling(get_wsgi_application())
+<<<<<<< HEAD
 # application = get_wsgi_application()
+=======
+>>>>>>> 883b520436e2b991423d05da16486f9f519112e2

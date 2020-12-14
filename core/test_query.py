@@ -34,7 +34,7 @@ class QueryTest(TestCase):
                 theoryGroup=self.thG)
             self.s.save()
         except:
-            pass
+            print("Already exists")
         try:
             self.s1 = Student.objects.create(
                 id=1001, first_name="student",
@@ -42,7 +42,7 @@ class QueryTest(TestCase):
                 theoryGroup=self.thG)
             self.s1.save()
         except:
-            pass
+            print("Already exists")
 
     def test_pair_1000_1001(self):
         print("\nTest02")

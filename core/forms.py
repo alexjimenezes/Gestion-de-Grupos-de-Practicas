@@ -1,7 +1,7 @@
 from django import forms
 # from core.models import Pair
 from core.models import GroupConstraints, LabGroup, Student, Pair
-from django.forms import ChoiceField
+
 
 
 class RequestPairForm(forms.Form):
@@ -66,9 +66,9 @@ class RequestGroupForm(forms.Form):
         all_lab = GroupConstraints.objects.filter(
                     theoryGroup=self.user.theoryGroup)
         labs = []
-        for l in all_lab:
-            if l.labGroup.counter < l.labGroup.maxNumberStudents:
-                labs.append(l.labGroup.id)
+        for lab in all_lab:
+            if lab.labGroup.counter < lab.labGroup.maxNumberStudents:
+                labs.append(lab.labGroup.id)
 
         qset = LabGroup.objects.all().filter(id__in=labs)
         new_choices = []
