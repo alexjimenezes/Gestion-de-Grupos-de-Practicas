@@ -1,15 +1,25 @@
 from django.contrib import admin
-from core.models import Student, LabGroup, Teacher, Pair, GroupConstraints, TheoryGroup, OtherConstraints
+from core.models import (Student, LabGroup,
+                         Teacher, Pair,
+                         GroupConstraints, TheoryGroup,
+                         OtherConstraints)
 from django.contrib.auth.admin import UserAdmin
 
 
 """ class StudentAdmin(admin.ModelAdmin):
-    student_display = ['labGroup', 'theoryGroup', 'first_name', 'last_name', 'gradeTheoryLastYear', 'gradeLabLastYear', 'convalidationGranted']
+    student_display = ['labGroup', 'theoryGroup', 'first_name', 'last_name',
+    'gradeTheoryLastYear', 'gradeLabLastYear', 'convalidationGranted']
     readonly_fields = ('id',)
  """
 
+
 class LabGroupAdmin(admin.ModelAdmin):
-    labGroup_display = ['teacher', 'groupName', 'language', 'schedule', 'maxNumberStudents', 'counter']
+    labGroup_display = ['teacher',
+                        'groupName',
+                        'language',
+                        'schedule',
+                        'maxNumberStudents',
+                        'counter']
     readonly_fields = ('id',)
 
 
@@ -34,13 +44,14 @@ class TheoryGroupAdmin(admin.ModelAdmin):
 
 
 class OtherConstraintAdmin(admin.ModelAdmin):
-    list_display = ['selectGroupStartDate', 'minGradeTheoryConv', 'minGradeLabConv']
+    list_display = ['selectGroupStartDate',
+                    'minGradeTheoryConv', 'minGradeLabConv']
     readonly_fields = ('id',)
 
 
 # Register your models here.
 admin.site.register(Student, UserAdmin)
-#admin.site.register(Student, StudentAdmin)
+# admin.site.register(Student, StudentAdmin)
 admin.site.register(LabGroup, LabGroupAdmin)
 admin.site.register(Teacher, TeacherAdmin)
 admin.site.register(Pair, PairAdmin)

@@ -5,8 +5,10 @@ from django.db import models
 
 
 class Student(AbstractUser):
-    labGroup = models.ForeignKey('LabGroup', on_delete=models.CASCADE, null=True)
-    theoryGroup = models.ForeignKey('TheoryGroup', on_delete=models.CASCADE, null=True)
+    labGroup = models.ForeignKey(
+        'LabGroup', on_delete=models.CASCADE, null=True)
+    theoryGroup = models.ForeignKey(
+        'TheoryGroup', on_delete=models.CASCADE, null=True)
     first_name = models.CharField(blank=False, max_length=128)
     last_name = models.CharField(blank=False, max_length=128)
     gradeTheoryLastYear = models.IntegerField(default=0)
@@ -18,7 +20,9 @@ class Student(AbstractUser):
         ordering = ['last_name', 'first_name']
 
     def __str__(self):
-        return self.first_name + " " + self.last_name + " " + self.theoryGroup.__str__() + " " + self.labGroup.__str__()
+        return self.first_name + "\
+             " + self.last_name + "\
+             " + self.theoryGroup.__str__() + " " + self.labGroup.__str__()
 
 
 class LabGroup(models.Model):
@@ -33,7 +37,10 @@ class LabGroup(models.Model):
         ordering = ['groupName']
 
     def __str__(self):
-        return self.groupName + " " + self.teacher.__str__() + " " + self.language + " " + str(self.counter) + "/" + str(self.maxNumberStudents) 
+        return self.groupName + "\
+             " + self.teacher.__str__() + "\
+             " + self.language + "\
+             " + str(self.counter) + "/" + str(self.maxNumberStudents)
 
 
 class Teacher(models.Model):
@@ -48,16 +55,21 @@ class Teacher(models.Model):
 
 
 class Pair(models.Model):
-    student1 = models.ForeignKey('Student', related_name='par1', on_delete=models.CASCADE)
-    student2 = models.ForeignKey('Student', related_name='par2',on_delete=models.CASCADE)
+    student1 = models.ForeignKey(
+        'Student', related_name='par1', on_delete=models.CASCADE)
+    student2 = models.ForeignKey(
+        'Student', related_name='par2', on_delete=models.CASCADE)
     validated = models.BooleanField(default=False)
-    studentBreakRequest = models.ForeignKey('Student', related_name='breakPair', on_delete=models.CASCADE, null=True)
+    studentBreakRequest = models.ForeignKey(
+        'Student', related_name='breakPair',
+        on_delete=models.CASCADE, null=True)
 
     class Meta:
         ordering = ['student1', 'student2']
 
     def __str__(self):
-        return self.student1.__str__() + " " + self.student2.__str__() + " " + str(self.validated)
+        return self.student1.__str__() + "\
+             " + self.student2.__str__() + " " + str(self.validated)
 
 
 class GroupConstraints(models.Model):
@@ -88,4 +100,5 @@ class OtherConstraints(models.Model):
     minGradeLabConv = models.FloatField(default=0)
 
     def __str__(self):
-        return str(self.selectGroupStartDate) + " " + str(self.minGradeTheoryConv) + " " + str(self.minGradeLabConv)
+        return str(self.selectGroupStartDate) + "\
+             " + str(self.minGradeTheoryConv) + " " + str(self.minGradeLabConv)

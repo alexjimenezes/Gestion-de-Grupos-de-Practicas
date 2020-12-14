@@ -117,7 +117,9 @@ class Command(BaseCommand):
         exec(data)
 
         for t_id, t_data in teacherD.items():
-            t = Teacher.objects.get_or_create(id=t_id, first_name=t_data['first_name'], last_name=t_data['last_name'])[0]
+            t = Teacher.objects.get_or_create(
+                id=t_id, first_name=t_data['first_name'],
+                last_name=t_data['last_name'])[0]
             t.save()
 
     def labgroup(self):
@@ -128,7 +130,11 @@ class Command(BaseCommand):
         exec(data)
         for l_id, l_data in labgroupD.items():
             teacher = Teacher.objects.get(id=l_data['teacher'])
-            lg = LabGroup.objects.get_or_create(id=l_id, teacher=teacher, groupName=l_data['groupName'], language=l_data['language'], schedule=l_data['schedule'], maxNumberStudents=l_data['maxNumberStudents'])[0]
+            lg = LabGroup.objects.get_or_create(
+                id=l_id, teacher=teacher,
+                groupName=l_data['groupName'], language=l_data['language'],
+                schedule=l_data['schedule'],
+                maxNumberStudents=l_data['maxNumberStudents'])[0]
             lg.save()
 
     def theorygroup(self):
@@ -138,7 +144,9 @@ class Command(BaseCommand):
         data = self.getData()[2]
         exec(data)
         for t_id, t_data in theorygroupD.items():
-            t = TheoryGroup.objects.get_or_create(id=t_id, groupName=t_data['groupName'], language=t_data['language'])[0]
+            t = TheoryGroup.objects.get_or_create(
+                id=t_id, groupName=t_data['groupName'],
+                language=t_data['language'])[0]
             t.save()
 
     def groupconstraints(self):
@@ -153,7 +161,8 @@ class Command(BaseCommand):
         for t_id, t_data in groupconstraintsD.items():
             labGroup = LabGroup.objects.get(id=t_data['labGroup'])
             theoryGroup = TheoryGroup.objects.get(id=t_data['theoryGroup'])
-            t = GroupConstraints.objects.get_or_create(id=t_id, labGroup=labGroup, theoryGroup=theoryGroup)[0]
+            t = GroupConstraints.objects.get_or_create(
+                id=t_id, labGroup=labGroup, theoryGroup=theoryGroup)[0]
             t.save()
 
     def pair(self):
@@ -165,7 +174,9 @@ class Command(BaseCommand):
         for t_id, t_data in pairD.items():
             student1 = Student.objects.get(id=t_id)
             student2 = Student.objects.get(id=t_data['student2'])
-            t = Pair.objects.get_or_create(id=t_id, student1=student1, student2=student2, validated=t_data['validated'])[0]
+            t = Pair.objects.get_or_create(
+                id=t_id, student1=student1, student2=student2,
+                validated=t_data['validated'])[0]
             t.save()
 
     def otherconstrains(self):
@@ -177,8 +188,9 @@ class Command(BaseCommand):
         minGradeLabConv = 7
         """
         # remove pass and ADD CODE HERE
-        oc = OtherConstraints.objects.get_or_create(selectGroupStartDate=timezone.now()+datetime.timedelta(days=1), minGradeTheoryConv=3, minGradeLabConv=7)
-
+        oc = OtherConstraints.objects.get_or_create(
+            selectGroupStartDate=timezone.now()+datetime.timedelta(days=1),
+            minGradeTheoryConv=3, minGradeLabConv=7)
 
     def student(self, csvStudentFile):
         # read csv file
@@ -188,15 +200,22 @@ class Command(BaseCommand):
         counter = 1000
         for index, row in stdReader.iterrows():
             grupoToeria = TheoryGroup.objects.get(id=row['grupo-teoria'])
-            st = Student.objects.get_or_create(id=counter, first_name=row['Nombre'], last_name=row['Apellidos'], username=row['NIE'], theoryGroup=grupoToeria)[0]
+            st = Student.objects.get_or_create(
+                id=counter, first_name=row['Nombre'],
+                last_name=row['Apellidos'], username=row['NIE'],
+                theoryGroup=grupoToeria)[0]
             st.set_password(row['DNI'])
             st.save()
             counter += 1
 
     def studentgrade(self, cvsStudentFileGrades):
         # read csv file
-        # structure NIE	DNI	Apellidos	Nombre	group-Teoría	grade-practicas	gradeteoria
+        # structure NIE	DNI	Apellidos	Nombre	group-Teoría
+        # grade-practicas	gradeteoria
         # remove pass and ADD CODE HERE
-        stdGradesReader = pd.read_csv("./core/management/commands/" + cvsStudentFileGrades)
+        stdGradesReader = pd.read_csv("./core/management/commands/" +
+                                      cvsStudentFileGrades)
         for index, row in stdGradesReader.iterrows():
-            Student.objects.filter(username=row['NIE']).update(gradeLabLastYear=row['nota-practicas'], gradeTheoryLastYear=row['nota-teoria'])
+            Student.objects.filter(username=row['NIE']).update(
+                gradeLabLastYear=row['nota-practicas'],
+                gradeTheoryLastYear=row['nota-teoria'])
