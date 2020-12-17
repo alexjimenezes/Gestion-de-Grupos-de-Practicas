@@ -1,5 +1,5 @@
 from django.contrib import admin
-<<<<<<< HEAD
+
 from core.models import (Student, LabGroup,
                          Teacher, Pair,
                          GroupConstraints, TheoryGroup,
@@ -21,16 +21,7 @@ class LabGroupAdmin(admin.ModelAdmin):
                         'schedule',
                         'maxNumberStudents',
                         'counter']
-=======
-from core.models import Student, LabGroup, Teacher, Pair, GroupConstraints,\
-     TheoryGroup, OtherConstraints
-from django.contrib.auth.admin import UserAdmin
 
-
-class LabGroupAdmin(admin.ModelAdmin):
-    labGroup_display = ['teacher', 'groupName', 'language',
-                        'schedule', 'maxNumberStudents', 'counter']
->>>>>>> 883b520436e2b991423d05da16486f9f519112e2
     readonly_fields = ('id',)
 
 
@@ -61,10 +52,7 @@ class OtherConstraintAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Student, UserAdmin)
-<<<<<<< HEAD
 # admin.site.register(Student, StudentAdmin)
-=======
->>>>>>> 883b520436e2b991423d05da16486f9f519112e2
 admin.site.register(LabGroup, LabGroupAdmin)
 admin.site.register(Teacher, TeacherAdmin)
 admin.site.register(Pair, PairAdmin)
