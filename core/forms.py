@@ -20,9 +20,8 @@ class RequestPairForm(forms.Form):
             id__in=students_id).order_by('first_name')
         new_choices = []
         for q in qset:
-            new_choices.append((q.id, q.last_name + "\
-                , " + q.first_name + "\
-                 - " + str(q.theoryGroup) + " - " + str(q.labGroup)))
+            new_choices.append((q.id, q.last_name + ", " + q.first_name +
+            " - " + str(q.theoryGroup) + " - " + str(q.labGroup)))
         self.fields['secondMemberGroup'].choices = new_choices
 
 
