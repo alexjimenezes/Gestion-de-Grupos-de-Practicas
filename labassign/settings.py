@@ -132,7 +132,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticHeroku')
 STATIC_URL = '/static/'
-ALLOWED_HOSTS = [u'serene-caverns-84021.herokuapp.com/', u'localhost', u'127.0.0.1']
+ALLOWED_HOSTS = [u'serene-caverns-84021.herokuapp.com', u'localhost', u'127.0.0.1']
 
 LOGIN_REDIRECT_URL = 'home'
 
