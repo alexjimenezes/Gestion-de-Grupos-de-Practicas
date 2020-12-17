@@ -1,9 +1,9 @@
-(psienv) alex@hp:~/Documents/4/PSI/PSI-P2/labassing$ make coverage_datamodel 
+(psienv) alex@hp:~/Documents/4/PSI/p4/PSI_P3$ make coverage_datamodel
 coverage erase
 coverage run --omit="*/test*" --source=core ./manage.py test core.tests_models
 Creating test database for alias 'default'...
 System check identified no issues (0 silenced).
-/home/alex/Documents/4/PSI/PSI-P2/labassing
+/home/alex/Documents/4/PSI/p4/PSI_P3
 Testing Teachers:
 Testing Labgroup:
 Testing TheoryGroup:
@@ -13,7 +13,7 @@ Testing Pair:
 Testing OtherConstraints:
 .
 ----------------------------------------------------------------------
-Ran 1 test in 23.614s
+Ran 1 test in 22.873s
 
 OK
 Destroying test database for alias 'default'...
@@ -23,29 +23,23 @@ Name                                   Stmts   Miss  Cover   Missing
 core/__init__.py                           0      0   100%
 core/admin.py                             28      0   100%
 core/apps.py                               3      3     0%   1-5
-core/forms.py                             47     35    26%   9-21, 26-42, 48-61
+core/forms.py                             46     35    24%   11-25, 33-54, 62-76
 core/management/commands/populate.py     113      3    97%   36-52
 core/migrations/0001_initial.py           10      0   100%
 core/migrations/__init__.py                0      0   100%
 core/models.py                            62      0   100%
 core/urls.py                               3      0   100%
-core/views.py                            172    151    12%   13-50, 55-75, 80-81, 85-104, 109-155, 160-194, 199-236
+core/views.py                            171    151    12%   13-50, 55-77, 82-83, 88-114, 119-184, 189-240, 245-293
 --------------------------------------------------------------------
-TOTAL                                    438    192    56%
-
-
-
-
-
-
-(psienv) alex@hp:~/Documents/4/PSI/PSI-P2/labassing$ make coverage_services 
+TOTAL                                    436    192    56%
+(psienv) alex@hp:~/Documents/4/PSI/p4/PSI_P3$ make coverage_services
 coverage erase
 coverage run --omit="*/test*" --source=core ./manage.py test core.tests_services
 Creating test database for alias 'default'...
 System check identified no issues (0 silenced).
 .........................
 ----------------------------------------------------------------------
-Ran 25 tests in 18.478s
+Ran 25 tests in 18.112s
 
 OK
 Destroying test database for alias 'default'...
@@ -55,12 +49,12 @@ Name                                   Stmts   Miss  Cover   Missing
 core/__init__.py                           0      0   100%
 core/admin.py                             28      0   100%
 core/apps.py                               3      3     0%   1-5
-core/forms.py                             47      0   100%
-core/management/commands/populate.py     113     45    60%   36-52, 58-83, 162-169, 187-194, 200-202
+core/forms.py                             46      0   100%
+core/management/commands/populate.py     113     45    60%   36-52, 58-83, 171-180, 199-209, 216-219
 core/migrations/0001_initial.py           10      0   100%
 core/migrations/__init__.py                0      0   100%
-core/models.py                            62      5    92%   21, 60, 71, 82, 91
+core/models.py                            62      5    92%   23, 71, 83, 94, 103
 core/urls.py                               3      0   100%
-core/views.py                            172     20    88%   19-20, 23-24, 56-57, 68-71, 115-117, 140, 161-162, 173-174, 200-201, 208, 225
+core/views.py                            171     20    88%   19-20, 23-24, 56-58, 69-73, 127-131, 163, 190-193, 210-213, 246-247, 255, 278
 --------------------------------------------------------------------
-TOTAL                                    438     73    83%
+TOTAL                                    436     73    83%
